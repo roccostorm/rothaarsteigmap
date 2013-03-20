@@ -13,7 +13,7 @@ var rothaarsteig2 = {
 }
 
 // create a map in the "map" div, set the view to a given place and zoom
-var map = L.map('map').setView([51.395968962460756, 8.56808703392744], 9);
+var map = L.map('map').setView([51.11, 8.39], 9);
 
 // add an OpenStreetMap tile layer
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -34,5 +34,16 @@ var style = {
 };
     
 L.geoJson(rothaarsteig2).addTo(map);
+
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent(e.latlng.toString())
+        .openOn(map);
+}
+
+map.on('click', onMapClick);
 
 }());
