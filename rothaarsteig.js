@@ -35,9 +35,21 @@ var style = {
 var waypoints = L.layerGroup([start, etappenziel_1, etappenziel_2, etappenziel_3, etappenziel_4, etappenziel_5, stop]).addTo(map);
 var completeway =  L.geoJson(rothaarsteig).addTo(map);
 
+var camping_icon = L.icon({
+	iconUrl: 'camping-2.png',
+	iconSize: [32, 37],
+	iconAnchor: [16, 37]
+})
+var camping_dillenburg = new L.marker([50.73179, 8.26303], {icon: camping_icon}).bindPopup("Camping Dillenburg"),
+	camping_winterberg = new L.marker([51.18456, 8.5029], {icon: camping_icon}).bindPopup("Camping Winterberg"),
+	camping_bruchhausen = new L.marker([51.31164, 8.53492], {icon: camping_icon}).bindPopup("Camping Bruchhausen");
+
+var campingsites = L.layerGroup([camping_dillenburg, camping_bruchhausen, camping_winterberg]).addTo(map);
+
 var markers = {
     "start/ziel" : waypoints,
-    "rothaarsteig": completeway
+    "rothaarsteig": completeway,
+    "campingsites": campingsites
 }
 
 var layerControl = L.control.layers.provided(baseLayers, markers, {position: "topleft", collapsed: false}).addTo(map);
