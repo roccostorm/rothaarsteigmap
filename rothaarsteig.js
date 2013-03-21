@@ -1,5 +1,5 @@
 ( function () {
-var rothaarsteig2 = {
+var rothaarsteig = {
 	"type": "FeatureCollection",
 	"features": [
 		{
@@ -15,26 +15,33 @@ var rothaarsteig2 = {
 // create a map in the "map" div, set the view to a given place and zoom
 var map = L.map('map').setView([51.11, 8.39], 9);
 
-// add an OpenStreetMap tile layer
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+var baseLayers = ["OpenStreetMap", "OpenStreetMap.Mapnik", "OpenStreetMap.DE", "Thunderforest.Landscape", "MapQuestOpen.OSM","MapQuestOpen.Aerial"]
 
-// add a marker in the given location, attach some popup content to it and open the popup
-L.marker([51.395968962460756, 8.56808703392744]).addTo(map)
-    .bindPopup('Start here');
-
-L.marker([50.73686697520316, 8.288351995870471]).addTo(map)
-    .bindPopup('Fin');
+var start = L.marker([51.395968962460756, 8.56808703392744]).bindPopup('Start here'),
+    stop = L.marker([50.73686697520316, 8.288351995870471]).bindPopup('Stop'),
+    etappenziel_1 = L.marker([51.31181, 8.53505]).bindPopup('erstes Etappenziel'),
+    etappenziel_2 = L.marker([51.18484, 8.50301]).bindPopup('zweites Etappenziel'),
+    etappenziel_3 = L.marker([51.09823, 8.30725]).bindPopup('drittes Etappenziel'),
+    etappenziel_4 = L.marker([50.96686, 8.17451]).bindPopup('viertes Etappenziel'),
+    etappenziel_5 = L.marker([50.8408, 8.217]).bindPopup('fünftes Etappenziel');
 
 var style = {
     "color": "#ff7800",
     "weight": 5,
     "opacity": 0.65
 };
-    
-L.geoJson(rothaarsteig2).addTo(map);
+   
 
+var waypoints = L.layerGroup([start, etappenziel_1, etappenziel_2, etappenziel_3, etappenziel_4, etappenziel_5, stop]).addTo(map);
+var completeway =  L.geoJson(rothaarsteig).addTo(map);
+
+var markers = {
+    "start/ziel" : waypoints,
+    "rothaarsteig": completeway
+}
+
+var layerControl = L.control.layers.provided(baseLayers, markers, {position: "topleft", collapsed: false}).addTo(map);
+ 
 var popup = L.popup();
 
 function onMapClick(e) {
@@ -45,5 +52,7 @@ function onMapClick(e) {
 }
 
 map.on('click', onMapClick);
+
+var hash = new L.Hash(map);
 
 }());
