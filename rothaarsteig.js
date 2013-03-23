@@ -12,8 +12,12 @@ var rothaarsteig = {
 	]
 }
 
-// create a map in the "map" div, set the view to a given place and zoom
-var map = L.map('map').setView([51.11, 8.39], 9);
+// create a map in the "map" div, set the view to fit to the whole path
+var map = L.map('map'); 
+map.fitBounds([
+		[51.395968962460756, 8.56808703392744],
+		[50.73686697520316, 8.288351995870471]
+	])
 
 var baseLayers = ["OpenStreetMap", "OpenStreetMap.Mapnik", "OpenStreetMap.DE", "Thunderforest.Landscape", "MapQuestOpen.OSM","MapQuestOpen.Aerial"]
 
