@@ -1,5 +1,19 @@
 ( function () {
-var rothaarsteig = {
+// styles and icons
+
+var style = {
+    "color": "#ff7800",
+    "weight": 5,
+    "opacity": 0.65
+};
+var camping_icon = L.icon({
+	iconUrl: 'camping-2.png',
+	iconSize: [32, 37],
+	iconAnchor: [16, 37]
+})
+
+// coordinates of the rothaarsteig as geojson data
+var rhs = {
 	"type": "FeatureCollection",
 	"features": [
 		{
@@ -12,63 +26,85 @@ var rothaarsteig = {
 	]
 }
 
-// create a map in the "map" div, set the view to fit to the whole path
-var map = L.map('map'); 
-map.fitBounds([
-		[51.395968962460756, 8.56808703392744],
-		[50.73686697520316, 8.288351995870471]
-	])
+// base coordinates
+var start = new L.LatLng(51.395968962460756, 8.56808703392744),
+	ziel = new L.LatLng(50.73686697520316, 8.288351995870471);
 
-var baseLayers = ["OpenStreetMap", "OpenStreetMap.Mapnik", "OpenStreetMap.DE", "Thunderforest.Landscape", "MapQuestOpen.OSM","MapQuestOpen.Aerial"]
-
-var start = L.marker([51.395968962460756, 8.56808703392744]).bindPopup('Start here'),
-    stop = L.marker([50.73686697520316, 8.288351995870471]).bindPopup('Stop'),
+// stage markers
+var start_marker = L.marker(start).bindPopup('Start here'),
     etappenziel_1 = L.marker([51.31181, 8.53505]).bindPopup('erstes Etappenziel'),
     etappenziel_2 = L.marker([51.18484, 8.50301]).bindPopup('zweites Etappenziel'),
     etappenziel_3 = L.marker([51.09823, 8.30725]).bindPopup('drittes Etappenziel'),
     etappenziel_4 = L.marker([50.96686, 8.17451]).bindPopup('viertes Etappenziel'),
-    etappenziel_5 = L.marker([50.8408, 8.217]).bindPopup('fünftes Etappenziel');
+    etappenziel_5 = L.marker([50.8408, 8.217]).bindPopup('fünftes Etappenziel'),
+    ziel_marker = L.marker(ziel).bindPopup('Stop');
 
-var style = {
-    "color": "#ff7800",
-    "weight": 5,
-    "opacity": 0.65
-};
-   
-
-var waypoints = L.layerGroup([start, etappenziel_1, etappenziel_2, etappenziel_3, etappenziel_4, etappenziel_5, stop]).addTo(map);
-var completeway =  L.geoJson(rothaarsteig).addTo(map);
-
-var camping_icon = L.icon({
-	iconUrl: 'camping-2.png',
-	iconSize: [32, 37],
-	iconAnchor: [16, 37]
-})
+// mark the compingsites
 var camping_dillenburg = new L.marker([50.73179, 8.26303], {icon: camping_icon}).bindPopup("Camping Dillenburg"),
 	camping_winterberg = new L.marker([51.18456, 8.5029], {icon: camping_icon}).bindPopup("Camping Winterberg"),
-	camping_bruchhausen = new L.marker([51.31164, 8.53492], {icon: camping_icon}).bindPopup("Camping Bruchhausen");
+	camping_bruchhausen = new L.marker([51.31164, 8.53492], {icon: camping_icon}).bindPopup("Camping Bruchhausen"); 
 
-var campingsites = L.layerGroup([camping_dillenburg, camping_bruchhausen, camping_winterberg]).addTo(map);
+// create a map in the "map" div, 
+var map = L.map('map'); 
 
-var markers = {
+// create the info layers
+var waypoints = L.layerGroup([
+	start_marker, 
+	etappenziel_1, 
+	etappenziel_2, 
+	etappenziel_3, 
+	etappenziel_4, 
+	etappenziel_5, 
+	ziel_marker
+	]).addTo(map);
+
+var completeway =  L.geoJson(rhs).addTo(map);
+
+var campingsites = L.layerGroup([
+	camping_dillenburg, 
+	camping_bruchhausen, 
+	camping_winterberg
+	]).addTo(map);
+
+var infolayers = {
     "start/ziel" : waypoints,
     "rothaarsteig": completeway,
     "campingsites": campingsites
 }
 
-var layerControl = L.control.layers.provided(baseLayers, markers, {position: "topleft", collapsed: false}).addTo(map);
- 
-var popup = L.popup();
+// base layers for layer control
+var baseLayers = [
+	"OpenStreetMap", 
+	"OpenStreetMap.Mapnik", 
+	"OpenStreetMap.DE", 
+	"Thunderforest.Landscape", 
+	"MapQuestOpen.OSM",
+	"MapQuestOpen.Aerial"
+	]
 
+// layer control with base- and infolayers
+var layerControl = L.control.layers.provided(
+	baseLayers, 
+	infolayers, 
+	{
+		position: "topleft", 
+		collapsed: false
+	}
+	).addTo(map);
+
+// enable hash url
+var hash = new L.Hash(map);
+//set the view to fit to the whole path
+map.fitBounds([start, ziel]);   
+
+// test popup to get coordinates by clicking on the map 
+var popup = L.popup();
 function onMapClick(e) {
     popup
         .setLatLng(e.latlng)
         .setContent(e.latlng.toString())
         .openOn(map);
 }
-
 map.on('click', onMapClick);
-
-var hash = new L.Hash(map);
 
 }());
